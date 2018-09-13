@@ -24,8 +24,14 @@
  */
 package net.runelite.cache.fs.flat;
 
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.runelite.cache.client.CacheClient;
 import net.runelite.cache.fs.Archive;
@@ -45,6 +51,8 @@ public class FlatCache
 		System.err.println("download [old id] [flat cache directory]");
 		System.err.println("pack [jagex cache directory] [flat cache directory]");
 		System.err.println("unpack [flat cache directory] [jagex cache directory]");
+		System.err.println("dump [type[,type]] [flat cache directory] [output directory or 7z]");
+		System.err.println("dump types: all," + Stream.of(Dumper.values()).map(Enum::name).map(String::toLowerCase).collect(Collectors.joining(", ")));
 		System.exit(1);
 	}
 
@@ -172,6 +180,55 @@ public class FlatCache
 						}
 					}
 					fss.save();
+				}
+
+				return;
+			}
+			case "dump":
+			{
+				if (args.length != 4)
+				{
+					break;
+				}
+
+				List<String> names = Stream.of(args[1].split(",")).map(String::toUpperCase).collect(Collectors.toList());
+				List<Dumper> dumpers;
+				if (names.contains("ALL"))
+				{
+					dumpers = Lists.newArrayList(Dumper.values());
+				}
+				else
+				{
+					dumpers = names.stream().map(Dumper::valueOf).collect(Collectors.toList());
+				}
+
+				FlatStorage fs = new FlatStorage(new File(args[2]));
+				try (Store store = new Store(fs))
+				{
+					store.load();
+					File outdir = new File(args[3]);
+					ExecutorService tp = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+					tp.invokeAll(dumpers.stream().map(d -> (Callable<Void>) () ->
+					{
+						File f = new File(outdir, d.name().toLowerCase());
+						f.mkdirs();
+						d.dump(store, f);
+						return null;
+					})
+						.collect(Collectors.toList())).forEach(i ->
+					{
+						try
+						{
+							i.get();
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					});
+
+					tp.shutdown();
 				}
 
 				return;
