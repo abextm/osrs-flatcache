@@ -182,7 +182,8 @@ public enum Dumper
 				Index i = store.getIndex(IndexType.MODELS);
 				for (Archive a : i.getArchives())
 				{
-					byte[] data = store.getStorage().loadArchive(a);
+					byte[] cad = store.getStorage().loadArchive(a);
+					byte[] data = a.decompress(cad);
 					writeFile(output, a.getArchiveId() + ".model", data);
 				}
 			}
@@ -197,7 +198,8 @@ public enum Dumper
 				Index i = store.getIndex(IndexType.MODELS);
 				for (Archive a : i.getArchives())
 				{
-					byte[] data = store.getStorage().loadArchive(a);
+					byte[] cad = store.getStorage().loadArchive(a);
+					byte[] data = a.decompress(cad);
 					ModelDefinition d = l.load(a.getArchiveId(), data);
 					writeFile(output, a.getArchiveId(), d);
 				}
