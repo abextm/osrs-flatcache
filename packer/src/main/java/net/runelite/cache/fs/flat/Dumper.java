@@ -31,6 +31,7 @@ import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Map;
 import net.runelite.cache.ConfigType;
 import net.runelite.cache.IndexType;
 import net.runelite.cache.InterfaceManager;
@@ -40,12 +41,14 @@ import net.runelite.cache.NpcManager;
 import net.runelite.cache.ObjectManager;
 import net.runelite.cache.OverlayManager;
 import net.runelite.cache.SpriteManager;
+import net.runelite.cache.StructManager;
 import net.runelite.cache.TextureManager;
 import net.runelite.cache.UnderlayManager;
 import net.runelite.cache.definitions.InventoryDefinition;
 import net.runelite.cache.definitions.ModelDefinition;
 import net.runelite.cache.definitions.OverlayDefinition;
 import net.runelite.cache.definitions.ScriptDefinition;
+import net.runelite.cache.definitions.StructDefinition;
 import net.runelite.cache.definitions.TextureDefinition;
 import net.runelite.cache.definitions.UnderlayDefinition;
 import net.runelite.cache.definitions.loaders.EnumLoader;
@@ -249,6 +252,20 @@ public enum Dumper
 					ScriptDefinition sd = sl.load(a.getArchiveId(), data);
 					String disasm = ds.disassemble(sd);
 					writeFile(output, a.getArchiveId() + ".rs2asm", disasm.getBytes());
+				}
+			}
+		},
+	STRUCTS
+		{
+			@Override
+			public void dump(Store store, File output) throws Exception
+			{
+				StructManager sm = new StructManager(store);
+				sm.load();
+
+				for (Map.Entry<Integer, StructDefinition> sd : sm.getStructs().entrySet())
+				{
+					writeFile(output, sd.getKey(), sd.getValue());
 				}
 			}
 		};
