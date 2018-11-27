@@ -281,7 +281,10 @@ public enum Dumper
 		for (FSFile f : fs.getFiles())
 		{
 			D d = load.load(f.getFileId(), f.getContents());
-			writeFile(output, f.getFileId(), d);
+			if (d != null)
+			{
+				writeFile(output, f.getFileId(), d);
+			}
 		}
 	}
 
