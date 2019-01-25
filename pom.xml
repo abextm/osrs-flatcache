@@ -29,7 +29,7 @@
 
 	<groupId>net.runelite.cache.flat</groupId>
 	<artifactId>runelite-flatcache-parent</artifactId>
-	<version>1.5.2-SNAPSHOT</version>
+	<version>1.5.9-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>OSRS-FlatCache</name>
@@ -68,7 +68,6 @@
 	</repositories>
 
 	<modules>
-		<module>flat-cache</module>
 		<module>packer</module>
 	</modules>
 
