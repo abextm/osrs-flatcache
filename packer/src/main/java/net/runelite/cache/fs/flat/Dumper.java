@@ -268,13 +268,78 @@ public enum Dumper
 					writeFile(output, sd.getKey(), sd.getValue());
 				}
 			}
+		},
+	@NotAll
+	_18
+		{
+			@Override
+			public void dump(Store store, File output) throws Exception
+			{
+				for (Archive a : store.findIndex(18).getArchives())
+				{
+					byte[] cab = store.getStorage().loadArchive(a);
+					ArchiveFiles af = a.getFiles(cab);
+					if (af.getFiles().size() == 1)
+					{
+						writeFile(output, "" + a.getArchiveId(), af.getFiles().get(0).getContents());
+					}
+					else
+					{
+						for (FSFile fsf : af.getFiles())
+						{
+							writeFile(output, a.getArchiveId() + "/" + fsf.getFileId(), fsf.getContents());
+						}
+					}
+				}
+			}
+		},
+	@NotAll
+	_19
+		{
+			@Override
+			public void dump(Store store, File output) throws Exception
+			{
+				for (Archive a : store.findIndex(19).getArchives())
+				{
+					byte[] cab = store.getStorage().loadArchive(a);
+					ArchiveFiles af = a.getFiles(cab);
+					if (af.getFiles().size() == 1)
+					{
+						writeFile(output, "" + a.getArchiveId(), af.getFiles().get(0).getContents());
+					}
+					else
+					{
+						for (FSFile fsf : af.getFiles())
+						{
+							writeFile(output, a.getArchiveId() + "/" + fsf.getFileId(), fsf.getContents());
+						}
+					}
+				}
+			}
+		},
+	@NotAll
+	_20
+		{
+			@Override
+			public void dump(Store store, File output) throws Exception
+			{
+				for (Archive a : store.findIndex(20).getArchives())
+				{
+					byte[] cab = store.getStorage().loadArchive(a);
+					byte[] data = a.decompress(cab);
+
+					writeFile(output, a.getArchiveId() + ".png", data);
+				}
+			}
 		};
 
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	private static void writeFile(File dir, String name, byte[] data) throws IOException
 	{
-		Files.write(new File(dir, name).toPath(), data);
+		File fi = new File(dir, name);
+		fi.getParentFile().mkdirs();
+		Files.write(fi.toPath(), data);
 	}
 
 	private static void writeFile(File dir, int name, Object data) throws IOException
