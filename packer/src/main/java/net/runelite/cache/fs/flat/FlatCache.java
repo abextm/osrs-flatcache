@@ -24,9 +24,10 @@
  */
 package net.runelite.cache.fs.flat;
 
-import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -192,15 +193,29 @@ public class FlatCache
 				}
 
 				List<String> names = Stream.of(args[1].split(",")).map(String::toUpperCase).collect(Collectors.toList());
-				List<Dumper> dumpers;
+				List<Dumper> dumpers = new ArrayList<>();
 				if (names.contains("ALL"))
 				{
-					dumpers = Lists.newArrayList(Dumper.values());
+					dumpers = Stream.of(Dumper.class.getDeclaredFields())
+						.filter(i -> Modifier.isStatic(i.getModifiers()) && !i.isSynthetic() && Modifier.isPublic(i.getModifiers()))
+						.filter(i -> i.getAnnotationsByType(NotAll.class).length == 0)
+						.map(i ->
+						{
+							try
+							{
+								return (Dumper) i.get(null);
+							}
+							catch (ReflectiveOperationException e)
+							{
+								throw new RuntimeException(e);
+							}
+						})
+						.collect(Collectors.toList());
 				}
-				else
-				{
-					dumpers = names.stream().map(Dumper::valueOf).collect(Collectors.toList());
-				}
+				dumpers.addAll(names.stream()
+					.filter(i -> !"ALL".equals(i))
+					.map(Dumper::valueOf)
+					.collect(Collectors.toList()));
 
 				FlatStorage fs = new FlatStorage(new File(args[2]));
 				try (Store store = new Store(fs))
