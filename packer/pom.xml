@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>runelite-flatcache-parent</artifactId>
 		<groupId>net.runelite.cache.flat</groupId>
-		<version>1.5.2-SNAPSHOT</version>
+		<version>1.5.16-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -19,11 +19,6 @@
 		<dependency>
 			<groupId>net.runelite</groupId>
 			<artifactId>cache-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.runelite.cache.flat</groupId>
-			<artifactId>flat-cache</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
