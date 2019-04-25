@@ -9,7 +9,7 @@ if [[ -n ${DO_RELEASE_TAG+x} ]]; then
 	BRANCH="--branch $DO_RELEASE_TAG"
 fi
 
-git clone --depth 1 $BRANCH https://github.com/Abextm/osrs-cache.git osrs-cache
+git clone --depth 1 $BRANCH https://github.com/abextm/osrs-cache.git osrs-cache
 mkdir dump
 export VER="$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)"
 java -jar "packer/target/packer-$VER-shaded.jar" dump all osrs-cache dump
