@@ -29,7 +29,7 @@
 
 	<groupId>net.runelite.cache.flat</groupId>
 	<artifactId>runelite-flatcache-parent</artifactId>
-	<version>1.5.16-SNAPSHOT</version>
+	<version>1.5.23-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>OSRS-FlatCache</name>
@@ -55,12 +55,12 @@
 	<repositories>
 		<repository>
 			<id>maven-central</id>
-			<url>http://repo1.maven.org/maven2</url>
+			<url>https://repo1.maven.org/maven2</url>
 		</repository>
 		<repository>
 			<id>runelite</id>
 			<name>RuneLite</name>
-			<url>http://repo.runelite.net</url>
+			<url>https://repo.runelite.net</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>

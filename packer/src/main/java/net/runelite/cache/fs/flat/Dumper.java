@@ -36,9 +36,6 @@ import net.runelite.cache.ConfigType;
 import net.runelite.cache.IndexType;
 import net.runelite.cache.InterfaceManager;
 import net.runelite.cache.InventoryManager;
-import net.runelite.cache.ItemManager;
-import net.runelite.cache.NpcManager;
-import net.runelite.cache.ObjectManager;
 import net.runelite.cache.OverlayManager;
 import net.runelite.cache.SpriteManager;
 import net.runelite.cache.StructManager;
@@ -52,8 +49,12 @@ import net.runelite.cache.definitions.StructDefinition;
 import net.runelite.cache.definitions.TextureDefinition;
 import net.runelite.cache.definitions.UnderlayDefinition;
 import net.runelite.cache.definitions.loaders.EnumLoader;
+import net.runelite.cache.definitions.loaders.ItemLoader;
 import net.runelite.cache.definitions.loaders.KitLoader;
 import net.runelite.cache.definitions.loaders.ModelLoader;
+import net.runelite.cache.definitions.loaders.NpcLoader;
+import net.runelite.cache.definitions.loaders.ObjectLoader;
+import net.runelite.cache.definitions.loaders.ParamLoader;
 import net.runelite.cache.definitions.loaders.ScriptLoader;
 import net.runelite.cache.definitions.loaders.SequenceLoader;
 import net.runelite.cache.definitions.loaders.VarbitLoader;
@@ -118,9 +119,7 @@ public enum Dumper
 			@Override
 			public void dump(Store store, File output) throws Exception
 			{
-				ObjectManager m = new ObjectManager(store);
-				m.load();
-				m.dump(output);
+				writeConfig(store, output, ConfigType.OBJECT, new ObjectLoader()::load);
 			}
 		},
 	ENUMS
@@ -136,9 +135,7 @@ public enum Dumper
 			@Override
 			public void dump(Store store, File output) throws Exception
 			{
-				NpcManager m = new NpcManager(store);
-				m.load();
-				m.dump(output);
+				writeConfig(store, output, ConfigType.NPC, new NpcLoader()::load);
 			}
 		},
 	ITEM_DEFS
@@ -146,9 +143,7 @@ public enum Dumper
 			@Override
 			public void dump(Store store, File output) throws Exception
 			{
-				ItemManager m = new ItemManager(store);
-				m.load();
-				m.export(output);
+				writeConfig(store, output, ConfigType.ITEM, new ItemLoader()::load);
 			}
 		},
 	SEQUENCES
@@ -165,6 +160,14 @@ public enum Dumper
 			public void dump(Store store, File output) throws Exception
 			{
 				writeConfig(store, output, ConfigType.VARBIT, new VarbitLoader()::load);
+			}
+		},
+	PARAM_DEFS
+		{
+			@Override
+			public void dump(Store store, File output) throws Exception
+			{
+				writeConfig(store, output, ConfigType.PARAM, new ParamLoader()::load);
 			}
 		},
 	INTERFACE_DEFS
