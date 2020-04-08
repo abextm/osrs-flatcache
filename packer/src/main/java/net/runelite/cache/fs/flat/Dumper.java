@@ -167,7 +167,7 @@ public enum Dumper
 			@Override
 			public void dump(Store store, File output) throws Exception
 			{
-				writeConfig(store, output, ConfigType.PARAM, new ParamLoader()::load);
+				writeConfig(store, output, ConfigType.PARAMS, (id, b) -> new ParamLoader().load(b));
 			}
 		},
 	INTERFACE_DEFS
