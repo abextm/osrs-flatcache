@@ -273,7 +273,14 @@ public class FlatCache
 				dstArc.setRevision(srcArc.getRevision());
 
 				byte[] data = src.getStorage().loadArchive(srcArc);
-				dst.getStorage().saveArchive(dstArc, data);
+				if (data == null)
+				{
+					System.out.println("" + srcIdx.getId() + " " + srcArc.getArchiveId());
+				}
+				else
+				{
+					dst.getStorage().saveArchive(dstArc, data);
+				}
 			}
 		}
 
