@@ -274,6 +274,29 @@ public enum Dumper
 				}
 			}
 		},
+	BINARY
+		{
+			@Override
+			public void dump(Store store, File output) throws Exception
+			{
+				for (Archive a : store.getIndex(IndexType.BINARY).getArchives())
+				{
+					byte[] cab = store.getStorage().loadArchive(a);
+					ArchiveFiles af = a.getFiles(cab);
+					if (af.getFiles().size() == 1)
+					{
+						writeFile(output, "" + a.getArchiveId(), af.getFiles().get(0).getContents());
+					}
+					else
+					{
+						for (FSFile fsf : af.getFiles())
+						{
+							writeFile(output, a.getArchiveId() + "/" + fsf.getFileId(), fsf.getContents());
+						}
+					}
+				}
+			}
+		},
 	@NotAll
 	_18
 		{
