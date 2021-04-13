@@ -63,6 +63,7 @@ import net.runelite.cache.fs.ArchiveFiles;
 import net.runelite.cache.fs.FSFile;
 import net.runelite.cache.fs.Index;
 import net.runelite.cache.fs.Store;
+import net.runelite.cache.io.InputStream;
 import net.runelite.cache.script.disassembler.Disassembler;
 
 public enum Dumper
@@ -152,6 +153,25 @@ public enum Dumper
 			public void dump(Store store, File output) throws Exception
 			{
 				writeConfig(store, output, ConfigType.SEQUENCE, new SequenceLoader()::load);
+			}
+		},
+	VAR_PLAYERS
+		{
+			@Override
+			public void dump(Store store, File output) throws Exception
+			{
+				Dumper.writeConfig(store, output, ConfigType.VARPLAYER, (id, b) ->
+				{
+					VarPlayer varp = new VarPlayer();
+					varp.id = id;
+					varp.decode(new InputStream(b));
+					if (varp.configType == 0)
+					{
+						return null;
+					}
+
+					return varp;
+				});
 			}
 		},
 	VAR_BITS
