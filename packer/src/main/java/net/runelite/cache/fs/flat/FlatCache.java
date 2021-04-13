@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 import net.runelite.cache.client.CacheClient;
 import net.runelite.cache.fs.Archive;
 import net.runelite.cache.fs.Index;
+import net.runelite.cache.fs.Storage;
 import net.runelite.cache.fs.Store;
 import net.runelite.cache.fs.jagex.DiskStorage;
 import net.runelite.protocol.api.login.HandshakeResponseType;
@@ -217,10 +218,8 @@ public class FlatCache
 					.map(Dumper::valueOf)
 					.collect(Collectors.toList()));
 
-				FlatStorage fs = new FlatStorage(new File(args[2]));
-				try (Store store = new Store(fs))
+				try (Store store = loadStore(new File(args[2])))
 				{
-					store.load();
 					File outdir = new File(args[3]);
 					ExecutorService tp = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
@@ -285,5 +284,26 @@ public class FlatCache
 		}
 
 		dst.save();
+	}
+
+	public static Store loadStore(File directory) throws IOException
+	{
+		Storage s = null;
+		if (new File(directory, "main_file_cache.dat2").exists())
+		{
+			s = new DiskStorage(directory);
+		}
+		else if (new File(directory, "0.flatcache").exists())
+		{
+			s = new FlatStorage(directory);
+		}
+		else
+		{
+			throw new IOException("\"" + directory + "\" isn't a cache");
+		}
+
+		Store st = new Store(s);
+		st.load();
+		return st;
 	}
 }
