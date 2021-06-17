@@ -1,0 +1,24 @@
+on:
+  workflow_dispatch:
+    inputs:
+      DO_RELEASE_TAG:
+        description: "Tag to release from"
+        required: false
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: "Run"
+      env:
+        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        DO_RELEASE_TAG: ${{ github.event.inputs.DO_RELEASE_TAG }}
+      run: |
+        ./travis.sh

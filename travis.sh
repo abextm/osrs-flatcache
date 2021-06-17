@@ -15,8 +15,6 @@ export VER="$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' -
 java -jar "packer/target/packer-$VER-shaded.jar" dump all osrs-cache dump
 
 if [[ -n ${DO_RELEASE_TAG+x} ]]; then
-	virtualenv -p python3 env
-	source env/bin/activate
 	pip3 install PyGithub
 	export ASSET_NAME="dump-$DO_RELEASE_TAG.tar.gz"
 	tar -zcf "$ASSET_NAME" dump
