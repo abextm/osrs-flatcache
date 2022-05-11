@@ -31,13 +31,15 @@ import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import net.runelite.cache.ConfigType;
 import net.runelite.cache.IndexType;
 import net.runelite.cache.InterfaceManager;
 import net.runelite.cache.InventoryManager;
 import net.runelite.cache.OverlayManager;
-import net.runelite.cache.SpriteManager;
 import net.runelite.cache.StructManager;
 import net.runelite.cache.TextureManager;
 import net.runelite.cache.UnderlayManager;
@@ -45,9 +47,11 @@ import net.runelite.cache.definitions.InventoryDefinition;
 import net.runelite.cache.definitions.ModelDefinition;
 import net.runelite.cache.definitions.OverlayDefinition;
 import net.runelite.cache.definitions.ScriptDefinition;
+import net.runelite.cache.definitions.SpriteDefinition;
 import net.runelite.cache.definitions.StructDefinition;
 import net.runelite.cache.definitions.TextureDefinition;
 import net.runelite.cache.definitions.UnderlayDefinition;
+import net.runelite.cache.definitions.exporters.SpriteExporter;
 import net.runelite.cache.definitions.loaders.EnumLoader;
 import net.runelite.cache.definitions.loaders.ItemLoader;
 import net.runelite.cache.definitions.loaders.KitLoader;
@@ -57,6 +61,7 @@ import net.runelite.cache.definitions.loaders.ObjectLoader;
 import net.runelite.cache.definitions.loaders.ParamLoader;
 import net.runelite.cache.definitions.loaders.ScriptLoader;
 import net.runelite.cache.definitions.loaders.SequenceLoader;
+import net.runelite.cache.definitions.loaders.SpriteLoader;
 import net.runelite.cache.definitions.loaders.VarbitLoader;
 import net.runelite.cache.fs.Archive;
 import net.runelite.cache.fs.ArchiveFiles;
@@ -238,9 +243,38 @@ public enum Dumper
 			@Override
 			public void dump(Store store, File output) throws Exception
 			{
-				SpriteManager sm = new SpriteManager(store);
-				sm.load();
-				sm.export(output);
+				SpriteLoader loader = new SpriteLoader();
+
+				for (Archive a : store.getIndex(IndexType.SPRITES).getArchives())
+				{
+					byte[] contents = a.decompress(store.getStorage().loadArchive(a));
+
+					List<SpriteDefinition> defs = Arrays.stream(loader.load(a.getArchiveId(), contents))
+						.filter(s -> s.getHeight() > 0 && s.getWidth() > 0)
+						.collect(Collectors.toList());
+					int id = a.getArchiveId();
+					if (defs.size() == 0)
+					{
+					}
+					else if (defs.size() == 1)
+					{
+						new SpriteExporter(defs.get(0)).exportTo(new File(output, id + ".png"));
+					}
+					else
+					{
+						File f = new File(output, "" + id);
+						f.mkdirs();
+						for (SpriteDefinition sprite : defs)
+						{
+							if (sprite.getHeight() <= 0 || sprite.getWidth() <= 0)
+							{
+								continue;
+							}
+
+							new SpriteExporter(sprite).exportTo(new File(f, sprite.getFrame() + ".png"));
+						}
+					}
+				}
 			}
 		},
 	TEXTURE_DEFS
