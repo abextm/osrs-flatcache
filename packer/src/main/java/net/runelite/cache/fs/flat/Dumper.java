@@ -43,6 +43,7 @@ import net.runelite.cache.OverlayManager;
 import net.runelite.cache.StructManager;
 import net.runelite.cache.TextureManager;
 import net.runelite.cache.UnderlayManager;
+import net.runelite.cache.definitions.DBTableIndex;
 import net.runelite.cache.definitions.InventoryDefinition;
 import net.runelite.cache.definitions.ModelDefinition;
 import net.runelite.cache.definitions.OverlayDefinition;
@@ -52,6 +53,9 @@ import net.runelite.cache.definitions.StructDefinition;
 import net.runelite.cache.definitions.TextureDefinition;
 import net.runelite.cache.definitions.UnderlayDefinition;
 import net.runelite.cache.definitions.exporters.SpriteExporter;
+import net.runelite.cache.definitions.loaders.DBRowLoader;
+import net.runelite.cache.definitions.loaders.DBTableIndexLoader;
+import net.runelite.cache.definitions.loaders.DBTableLoader;
 import net.runelite.cache.definitions.loaders.EnumLoader;
 import net.runelite.cache.definitions.loaders.ItemLoader;
 import net.runelite.cache.definitions.loaders.KitLoader;
@@ -413,6 +417,42 @@ public enum Dumper
 					writeFile(output, a.getArchiveId() + ".png", data);
 				}
 			}
+		},
+	DBTABLE
+		{
+			@Override
+			public void dump(Store store, File output) throws Exception
+			{
+				writeConfig(store, output, ConfigType.DBTABLE, new DBTableLoader()::load);
+			}
+		},
+	DBROW
+		{
+			@Override
+			public void dump(Store store, File output) throws Exception
+			{
+				writeConfig(store, output, ConfigType.DBROW, new DBRowLoader()::load);
+			}
+		},
+	DBTABLE_INDEX
+		{
+			@Override
+			public void dump(Store store, File output) throws Exception
+			{
+				DBTableIndexLoader loader = new DBTableIndexLoader();
+
+				Index index = store.getIndex(IndexType.DBTABLEINDEX);
+				for (Archive ar : index.getArchives())
+				{
+					File dir = new File(output, ar.getArchiveId() + "");
+					dir.mkdir();
+					for (FSFile f : ar.getFiles(store.getStorage().loadArchive(ar)).getFiles())
+					{
+						DBTableIndex row = loader.load(ar.getArchiveId(), f.getFileId() - 1, f.getContents());
+						writeFile(dir, f.getFileId() == 0 ? "master.json" : (f.getFileId() - 1) + ".json", row);
+					}
+				}
+			}
 		};
 
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -427,6 +467,11 @@ public enum Dumper
 	private static void writeFile(File dir, int name, Object data) throws IOException
 	{
 		writeFile(dir, name + ".json", GSON.toJson(data).getBytes());
+	}
+
+	private static void writeFile(File dir, String name, Object data) throws IOException
+	{
+		writeFile(dir, name, GSON.toJson(data).getBytes());
 	}
 
 	@FunctionalInterface
