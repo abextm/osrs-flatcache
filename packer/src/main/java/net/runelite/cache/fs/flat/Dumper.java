@@ -312,8 +312,17 @@ public enum Dumper
 					String shasum = BaseEncoding.base16().encode(Hashing.sha256().hashBytes(data).asBytes());
 					writeFile(output, a.getArchiveId() + ".hash", shasum.getBytes());
 
-					ScriptDefinition sd = sl.load(a.getArchiveId(), data);
-					String disasm = ds.disassemble(sd);
+					String disasm;
+					try
+					{
+						ScriptDefinition sd = sl.load(a.getArchiveId(), data);
+						disasm = ds.disassemble(sd);
+					}
+					catch (Exception e)
+					{
+						disasm = e.getMessage();
+					}
+
 					writeFile(output, a.getArchiveId() + ".rs2asm", disasm.getBytes());
 				}
 			}
