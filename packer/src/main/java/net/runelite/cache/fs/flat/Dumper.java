@@ -320,7 +320,7 @@ public enum Dumper
 					}
 					catch (Exception e)
 					{
-						disasm = e.getMessage();
+						disasm = e.toString();
 					}
 
 					writeFile(output, a.getArchiveId() + ".rs2asm", disasm.getBytes());
