@@ -34,13 +34,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.runelite.cache.client.CacheClient;
 import net.runelite.cache.fs.Archive;
 import net.runelite.cache.fs.Index;
 import net.runelite.cache.fs.Storage;
 import net.runelite.cache.fs.Store;
 import net.runelite.cache.fs.jagex.DiskStorage;
-import net.runelite.protocol.api.login.HandshakeResponseType;
 
 public class FlatCache
 {
@@ -50,7 +48,6 @@ public class FlatCache
 
 	private static void printUsage()
 	{
-		System.err.println("download [old id] [flat cache directory]");
 		System.err.println("pack [jagex cache directory] [flat cache directory]");
 		System.err.println("unpack [flat cache directory] [jagex cache directory]");
 		System.err.println("dump [type[,type]] [flat cache directory] [output directory or 7z]");
@@ -112,76 +109,6 @@ public class FlatCache
 					{
 						copyStore(fss, store);
 					}
-				}
-
-				return;
-			}
-			case "download":
-			{
-				if (args.length != 3)
-				{
-					break;
-				}
-
-				int rev = Integer.parseInt(args[1]);
-
-				File od = new File(args[2]);
-				od.mkdirs();
-
-				FlatStorage fs = new FlatStorage(od);
-				try (Store fss = new Store(fs))
-				{
-					fss.load();
-
-					CacheClient ccli = null;
-					try
-					{
-						for (int i = 0; ; i++)
-						{
-							if (i >= 5)
-							{
-								System.err.println("Unable to guess revision after " + i + " tries");
-								System.exit(1);
-								return;
-							}
-
-							if (ccli != null)
-							{
-								ccli.close();
-							}
-							ccli = new CacheClient(fss, rev);
-							ccli.connect();
-							HandshakeResponseType res = ccli.handshake().get();
-
-							if (res == HandshakeResponseType.RESPONSE_OK)
-							{
-								break;
-							}
-							else if (res == HandshakeResponseType.RESPONSE_OUTDATED)
-							{
-								rev++;
-								continue;
-							}
-							else
-							{
-								System.err.println("Unable to download cache: got " + res + " from server");
-								System.exit(1);
-								return;
-							}
-						}
-
-						System.out.printf("New revision: %d\n", rev);
-
-						ccli.download();
-					}
-					finally
-					{
-						if (ccli != null)
-						{
-							ccli.close();
-						}
-					}
-					fss.save();
 				}
 
 				return;
@@ -267,7 +194,6 @@ public class FlatCache
 				dstArc.setCompression(srcArc.getCompression());
 				dstArc.setCrc(srcArc.getCrc());
 				dstArc.setFileData(srcArc.getFileData());
-				dstArc.setHash(srcArc.getHash());
 				dstArc.setNameHash(srcArc.getNameHash());
 				dstArc.setRevision(srcArc.getRevision());
 

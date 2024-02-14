@@ -29,7 +29,7 @@
 
 	<groupId>net.runelite.cache.flat</groupId>
 	<artifactId>runelite-flatcache-parent</artifactId>
-	<version>1.9.5</version>
+	<version>1.10.22</version>
 	<packaging>pom</packaging>
 
 	<name>OSRS-FlatCache</name>
@@ -87,11 +87,6 @@
 			<dependency>
 				<groupId>net.runelite</groupId>
 				<artifactId>cache</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>net.runelite</groupId>
-				<artifactId>cache-client</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 		</dependencies>
