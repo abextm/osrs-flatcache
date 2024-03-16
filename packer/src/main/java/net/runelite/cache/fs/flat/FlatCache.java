@@ -187,6 +187,11 @@ public class FlatCache
 		for (Index srcIdx : src.getIndexes())
 		{
 			Index dstIdx = dst.addIndex(srcIdx.getId());
+			dstIdx.setCompression(srcIdx.getCompression());
+			dstIdx.setCrc(srcIdx.getCrc());
+			dstIdx.setRevision(srcIdx.getRevision());
+			dstIdx.setNamed(srcIdx.isNamed());
+			dstIdx.setProtocol(srcIdx.getProtocol());
 			for (Archive srcArc : srcIdx.getArchives())
 			{
 				Archive dstArc = dstIdx.addArchive(srcArc.getArchiveId());
