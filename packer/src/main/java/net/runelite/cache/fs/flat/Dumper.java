@@ -65,6 +65,7 @@ import net.runelite.cache.definitions.loaders.ObjectLoader;
 import net.runelite.cache.definitions.loaders.ParamLoader;
 import net.runelite.cache.definitions.loaders.ScriptLoader;
 import net.runelite.cache.definitions.loaders.SequenceLoader;
+import net.runelite.cache.definitions.loaders.SpotAnimLoader;
 import net.runelite.cache.definitions.loaders.SpriteLoader;
 import net.runelite.cache.definitions.loaders.VarbitLoader;
 import net.runelite.cache.fs.Archive;
@@ -207,6 +208,14 @@ public enum Dumper
 				InterfaceManager m = new InterfaceManager(store);
 				m.load();
 				m.export(output);
+			}
+		},
+	SPOTANIMS
+		{
+			@Override
+			public void dump(Store store, File output) throws Exception
+			{
+				writeConfig(store, output, ConfigType.SPOTANIM, new SpotAnimLoader()::load);
 			}
 		},
 	@NotAll
