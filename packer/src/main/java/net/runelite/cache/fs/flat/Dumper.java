@@ -57,6 +57,7 @@ import net.runelite.cache.definitions.loaders.DBRowLoader;
 import net.runelite.cache.definitions.loaders.DBTableIndexLoader;
 import net.runelite.cache.definitions.loaders.DBTableLoader;
 import net.runelite.cache.definitions.loaders.EnumLoader;
+import net.runelite.cache.definitions.loaders.GameValLoader;
 import net.runelite.cache.definitions.loaders.ItemLoader;
 import net.runelite.cache.definitions.loaders.KitLoader;
 import net.runelite.cache.definitions.loaders.ModelLoader;
@@ -361,7 +362,7 @@ public enum Dumper
 					ArchiveFiles af = a.getFiles(cab);
 					if (af.getFiles().size() == 1)
 					{
-						writeFile(output, "" + a.getArchiveId(), af.getFiles().get(0).getContents());
+						writeFile(output, "" + a.getArchiveId(), af.getFiles().iterator().next().getContents());
 					}
 					else
 					{
@@ -385,7 +386,7 @@ public enum Dumper
 					ArchiveFiles af = a.getFiles(cab);
 					if (af.getFiles().size() == 1)
 					{
-						writeFile(output, "" + a.getArchiveId(), af.getFiles().get(0).getContents());
+						writeFile(output, "" + a.getArchiveId(), af.getFiles().iterator().next().getContents());
 					}
 					else
 					{
@@ -409,7 +410,7 @@ public enum Dumper
 					ArchiveFiles af = a.getFiles(cab);
 					if (af.getFiles().size() == 1)
 					{
-						writeFile(output, "" + a.getArchiveId(), af.getFiles().get(0).getContents());
+						writeFile(output, "" + a.getArchiveId(), af.getFiles().iterator().next().getContents());
 					}
 					else
 					{
@@ -471,7 +472,25 @@ public enum Dumper
 					}
 				}
 			}
-		};
+		},
+	GAMEVALS
+		{
+			@Override
+			public void dump(Store store, File output) throws Exception
+			{
+				GameValLoader loader = new GameValLoader();
+				for (Archive a : store.getIndex(IndexType.GAMEVALS).getArchives())
+				{
+					byte[] cab = store.getStorage().loadArchive(a);
+					ArchiveFiles af = a.getFiles(cab);
+					for (FSFile fsf : af.getFiles())
+					{
+						writeFile(output, a.getArchiveId() + "/" + fsf.getFileId(), loader.load(a.getArchiveId(), fsf.getFileId(), fsf.getContents()));
+					}
+				}
+			}
+		}
+	;
 
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
