@@ -29,7 +29,7 @@
 
 	<groupId>net.runelite.cache.flat</groupId>
 	<artifactId>runelite-flatcache-parent</artifactId>
-	<version>1.11.14</version>
+	<version>1.12.17</version>
 	<packaging>pom</packaging>
 
 	<name>OSRS-FlatCache</name>
@@ -73,11 +73,11 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!--<dependency>
+			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>23.2-jre</version>
-			</dependency>-->
+			</dependency>
 			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
