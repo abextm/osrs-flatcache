@@ -310,10 +310,11 @@ public enum Dumper
 			@Override
 			public void dump(Store store, File output) throws Exception
 			{
-				ScriptLoader sl = new ScriptLoader();
+				Index i = store.getIndex(IndexType.CLIENTSCRIPT);
+				ScriptLoader sl = new ScriptLoader()
+					.configureForRevision(i.getRevision());
 				Disassembler ds = new Disassembler();
 
-				Index i = store.getIndex(IndexType.CLIENTSCRIPT);
 				for (Archive a : i.getArchives())
 				{
 					byte[] cab = store.getStorage().loadArchive(a);
