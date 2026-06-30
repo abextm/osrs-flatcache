@@ -10,3 +10,5 @@ project.properties
 .classpath
 dump
 osrs-cache
+.gradle/
+build/

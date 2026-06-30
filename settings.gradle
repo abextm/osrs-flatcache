@@ -1,0 +1,2 @@
+rootProject.name = 'runelite-flatcache-parent'
+include 'packer'

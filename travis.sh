@@ -2,7 +2,7 @@
 
 set -e -x
 
-mvn clean install -Dcheckstyle.skip=false
+./gradlew build
 
 BRANCH=""
 if [[ -n ${DO_RELEASE_TAG+x} ]]; then
@@ -11,10 +11,10 @@ fi
 
 git clone --depth 1 $BRANCH https://github.com/abextm/osrs-cache.git osrs-cache
 mkdir dump
-export VER="$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)"
-java -jar "packer/target/packer-$VER-shaded.jar" dump all osrs-cache dump
+./gradlew :packer:run --args="dump all osrs-cache dump"
 
 if [[ -n ${DO_RELEASE_TAG+x} ]]; then
+	export VER="$(./gradlew :packer:printRuneliteVersion -q)"
 	pip3 install PyGithub
 	export ASSET_NAME="dump-$DO_RELEASE_TAG.tar.gz"
 	tar -zcf "$ASSET_NAME" dump

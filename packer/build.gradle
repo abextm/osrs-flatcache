@@ -1,0 +1,22 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation 'net.runelite:cache:latest.release'
+    implementation 'com.google.guava:guava:23.2-jre'
+    implementation 'org.slf4j:slf4j-simple:1.7.12'
+    implementation 'com.google.code.gson:gson:2.8.5'
+}
+
+application {
+    mainClass = 'net.runelite.cache.fs.flat.FlatCache'
+}
+
+task printRuneliteVersion {
+    doLast {
+        println configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts
+            .find { it.moduleVersion.id.group == 'net.runelite' && it.moduleVersion.id.name == 'cache' }
+            .moduleVersion.id.version
+    }
+}
