@@ -1,6 +1,5 @@
 allprojects {
     apply plugin: 'java'
-    apply plugin: 'checkstyle'
 
     group = 'net.runelite.cache.flat'
     version = '1.0.0'
@@ -15,20 +14,6 @@ allprojects {
         mavenCentral()
         maven {
             url 'https://repo.runelite.net'
-        }
-    }
-
-    checkstyle {
-        toolVersion = '8.3'
-        configFile = rootProject.file('checkstyle.xml')
-        ignoreFailures = false
-        showViolations = true
-    }
-
-    tasks.withType(Checkstyle) {
-        reports {
-            xml.required = false
-            html.required = true
         }
     }
 }
