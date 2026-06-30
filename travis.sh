@@ -11,7 +11,7 @@ fi
 
 git clone --depth 1 $BRANCH https://github.com/abextm/osrs-cache.git osrs-cache
 mkdir dump
-./gradlew :packer:run --args="dump all osrs-cache dump"
+./gradlew :packer:run --args="dump all $(pwd)/osrs-cache $(pwd)/dump"
 
 if [[ -n ${DO_RELEASE_TAG+x} ]]; then
 	export VER="$(./gradlew :packer:printRuneliteVersion -q)"
